@@ -1,5 +1,7 @@
 console.log("Running configuration file: wdio.conf.js");
 
+var os = require('os')
+var fs = require('fs')
 var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
 var path = require('path');
 var imageComparison = require('./utilities/constants.js');
@@ -14,6 +16,32 @@ function getScreenshotName(folder, context){
     //return path.join(process.cwd(), folder, `${testName}_${type}_${browserName}_v${browserVersion}_${browserWidth}x${browserHeight}.png`)
     return path.join(process.cwd(), "screenshots/visual_regression_screenshots/" + testName, folder, `${testName}_${imageID}_${type}_${browserName}_v${browserVersion}.png`)
 }
+
+function getMetaData(){
+    
+    var text = 
+    '<environment>\n' + 
+    '   <parameter>\n' + 
+    '       <key>' + 'Browser' + '</key>\n' +
+    '       <value>' + browser.desiredCapabilities.browserName + '</value>\n' +
+    '   </parameter>\n' +
+    '   <parameter>\n' +
+    '       <key>Operating System</key>\n' +
+    '       <value>' + os.type + " " + os.release() + " - " + os.platform() + '</value>\n' +
+    '   </parameter>\n' +
+    '   <parameter>\n' +
+    '       <key>Executed</key>\n' +
+    '       <value>' + os.hostname + '</value>\n' +
+    '   </parameter>\n' +
+    '</environment>'                    
+
+    var writeStream = fs.createWriteStream("tempFiles/environment.txt");
+    writeStream.write(text);
+    writeStream.end();
+    browser.pause(3000);
+    fs.renameSync("tempFiles/environment.txt", "tempFiles/environment.xml")
+}
+
 
 exports.config = {
 
@@ -61,7 +89,7 @@ exports.config = {
             // 5 instances get started at a time.
             maxInstances: 1,
             //
-            browserName: 'chrome'
+            browserName: 'firefox'
         },
 
         /* {
@@ -159,7 +187,7 @@ exports.config = {
     reporterOptions: {
 
         allure: {
-            outputDir: './Reports/functional/testAutomation_Batch_Report/allure-raw-report',
+            outputDir: './reports/functional/testAutomation_Batch_Report/allure-raw-report',
             
         }
     },
@@ -218,6 +246,7 @@ exports.config = {
     before: function (capabilities, specs) {
         expect = require('chai').expect;
         console.log('Running on browser: ' + capabilities.browserName)
+        getMetaData()
     },
     /**
      * Runs before a WebdriverIO command gets executed.
