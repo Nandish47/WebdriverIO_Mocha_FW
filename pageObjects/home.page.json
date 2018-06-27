@@ -1,0 +1,24 @@
+{
+
+    "homePage": {
+
+        "selector": {
+
+            "vastRobotSelectionLink": ".fancy.button.large",
+            "aboutUsLink": "a[href='#about']"
+
+        },
+
+        "testData": {
+
+            "pageTitle": "Robot Parts Emporium"
+
+
+        }
+
+
+
+    }
+
+
+}

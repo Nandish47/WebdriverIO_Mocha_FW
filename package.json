@@ -1,0 +1,40 @@
+{
+  "name": "webdriverio-course-content",
+  "version": "1.0.0",
+  "description": "WebdriverIO",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server sample-site -p 8303",
+    "test": "wdio"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/"
+  },
+  "author": "Author",
+  "license": "lic",
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "homepage": "https://github.com/",
+  "dependencies": {
+    "http-server": "^0.9.0",
+    "jasmine-allure-reporter": "^1.0.2",
+    "mocha": "^5.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "json-file": "^0.1.0",
+    "mochawesome": "1.5.3",
+    "mochawesome-report-generator": "^2.3.2",
+    "selenium-standalone": "^6.15.0",
+    "wdio": "^2.0.2",
+    "wdio-allure-addons-reporter": "0.0.4",
+    "wdio-allure-reporter": "^0.6.2",
+    "wdio-mocha-framework": "^0.5.13",
+    "wdio-mochawesome-reporter": "^1.0.0",
+    "wdio-selenium-standalone-service": "0.0.10",
+    "wdio-spec-reporter": "^0.1.4",
+    "wdio-visual-regression-service": "^0.7.0"
+  }
+}
