@@ -1,10 +1,9 @@
 console.log("Running configuration file: wdio.conf.js");
 
-var os = require('os')
-var fs = require('fs')
 var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
 var path = require('path');
 var imageComparison = require('./utilities/constants.js');
+var fileObj = require('./utilities/fileSystemFunctions.js')
 
 function getScreenshotName(folder, context){
     var type = context.type;
@@ -16,32 +15,6 @@ function getScreenshotName(folder, context){
     //return path.join(process.cwd(), folder, `${testName}_${type}_${browserName}_v${browserVersion}_${browserWidth}x${browserHeight}.png`)
     return path.join(process.cwd(), "screenshots/visual_regression_screenshots/" + testName, folder, `${testName}_${imageID}_${type}_${browserName}_v${browserVersion}.png`)
 }
-
-function getMetaData(){
-    
-    var text = 
-    '<environment>\n' + 
-    '   <parameter>\n' + 
-    '       <key>' + 'Browser' + '</key>\n' +
-    '       <value>' + browser.desiredCapabilities.browserName + '</value>\n' +
-    '   </parameter>\n' +
-    '   <parameter>\n' +
-    '       <key>Operating System</key>\n' +
-    '       <value>' + os.type + " " + os.release() + " - " + os.platform() + '</value>\n' +
-    '   </parameter>\n' +
-    '   <parameter>\n' +
-    '       <key>Executed</key>\n' +
-    '       <value>' + os.hostname + '</value>\n' +
-    '   </parameter>\n' +
-    '</environment>'                    
-
-    var writeStream = fs.createWriteStream("tempFiles/environment.txt");
-    writeStream.write(text);
-    writeStream.end();
-    browser.pause(3000);
-    fs.renameSync("tempFiles/environment.txt", "tempFiles/environment.xml")
-}
-
 
 exports.config = {
 
@@ -92,15 +65,15 @@ exports.config = {
             browserName: 'firefox'
         },
 
-        /* {
+       /*  {
             // maxInstances can get overwritten per capability. So if you have an in-house Selenium
             // grid with only 5 firefox instances available you can make sure that not more than
             // 5 instances get started at a time.
             maxInstances: 1,
             
-            browserName: 'firefox'
-        } */
-
+            browserName: 'chrome'
+        }
+ */
 
     ],
     //
@@ -226,8 +199,10 @@ exports.config = {
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+
+        fileObj.getBrowserMetaData(capabilities);
+    },
     /**
      * Gets executed just before initialising the webdriver session and test framework. It allows you
      * to manipulate configurations depending on the capability or spec.
@@ -235,8 +210,9 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
-    // beforeSession: function (config, capabilities, specs) {
-    // },
+    beforeSession: function (config, capabilities, specs) {
+
+    },
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
@@ -244,9 +220,10 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     before: function (capabilities, specs) {
+        
         expect = require('chai').expect;
         console.log('Running on browser: ' + capabilities.browserName)
-        getMetaData()
+
     },
     /**
      * Runs before a WebdriverIO command gets executed.
@@ -290,21 +267,16 @@ exports.config = {
      */
     afterTest: function (test) {
 
-        console.log('test status: ' + test.passed) 
-
-        if (test.passed === true) {
-            console.log('\t', '--> [STATUS]:', 'PASSED');
-        } else {
-            console.log('\t', '--> [STATUS]:', 'FAILED');
+        if (test.passed === false) {
             browser.saveScreenshot('./screenshots/webdriverIO_screenshots/Error-' + browser.desiredCapabilities.browserName + " " +Date.now() + '.png');
-        }
 
+        }
     },
 
     onError: function(message) {
         
     
-    }
+    },
     /**
      * Hook that gets executed after the suite has ended
      * @param {Object} suite suite details
@@ -336,14 +308,19 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // afterSession: function (config, capabilities, specs) {
-    // },
+    afterSession: function (config, capabilities, specs) {
+
+        
+    },
     /**
      * Gets executed after all workers got shut down and the process is about to exit.
      * @param {Object} exitCode 0 - success, 1 - fail
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onComplete: function(exitCode, config, capabilities) {
-    // }
+    onComplete: function(exitCode, config, capabilities) {
+
+        
+
+    }
 }
